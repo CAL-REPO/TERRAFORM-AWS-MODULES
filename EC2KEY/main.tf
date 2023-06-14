@@ -24,7 +24,7 @@ locals {
         for EACH, KEY in var.KEYs:
             EACH => {
                 NAME = "${upper(KEY.NAME)}"
-                KEY_WIN_FILE = "${KEY.WIN_DIR}/${upper(KEY.NAME)}.pem"
+                KEY_BACKUP_FILE = "${KEY.WIN_DIR}/${upper(KEY.NAME)}.pem"
                 KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${upper(KEY.NAME)}.pem"
             }
     }
@@ -41,7 +41,7 @@ resource "aws_key_pair" "KEY" {
 
     provisioner "local-exec" {
         command = <<EOF
-            sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_WIN_FILE}"
+            sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_BACKUP_FILE}"
             sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_LINUX_FILE}"            
             sudo chmod 400 "${local.KEYs[count.index].KEY_LINUX_FILE}"
             sudo chown $USER:$USER "${local.KEYs[count.index].KEY_LINUX_FILE}"
@@ -58,18 +58,18 @@ resource "null_resource" "REMOVE_KEY" {
 
     for_each = local.KEYs
     triggers = {
-        KEY_WIN_FILE = each.value.KEY_WIN_FILE
+        KEY_BACKUP_FILE = each.value.KEY_BACKUP_FILE
         KEY_LINUX_FILE = each.value.KEY_LINUX_FILE
     }
 
     provisioner "local-exec" {
         when    = destroy
         command = <<EOF
-            if [ -f "${self.triggers.KEY_WIN_FILE}" ]
-            then sudo rm -rf "${self.triggers.KEY_WIN_FILE}"
+            if [ -f "${self.triggers.KEY_BACKUP_FILE}" ]; then
+                sudo rm -rf "${self.triggers.KEY_BACKUP_FILE}"
             fi
-            if [ -f "${self.triggers.KEY_LINUX_FILE}" ]
-            then sudo rm -rf "${self.triggers.KEY_LINUX_FILE}"
+            if [ -f "${self.triggers.KEY_LINUX_FILE}" ]; then 
+                sudo rm -rf "${self.triggers.KEY_LINUX_FILE}"
             fi
         EOF
     }
