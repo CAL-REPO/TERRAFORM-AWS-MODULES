@@ -41,10 +41,6 @@ resource "aws_key_pair" "KEY" {
 
     provisioner "local-exec" {
         command = <<EOF
-            sudo touch "${local.KEYs[count.index].KEY_BACKUP_FILE}"
-            sudo touch "${local.KEYs[count.index].KEY_LINUX_FILE}"
-            sudo chmod +x "${local.KEYs[count.index].KEY_BACKUP_FILE}"
-            sudo chmod +x "${local.KEYs[count.index].KEY_LINUX_FILE}"
             sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_BACKUP_FILE}"
             sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_LINUX_FILE}"            
             sudo chmod 400 "${local.KEYs[count.index].KEY_LINUX_FILE}"
