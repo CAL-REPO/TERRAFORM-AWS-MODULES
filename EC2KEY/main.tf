@@ -24,7 +24,7 @@ locals {
         for EACH, KEY in var.KEYs:
             EACH => {
                 NAME = "${upper(KEY.NAME)}"
-                KEY_BACKUP_FILE = "${KEY.WIN_DIR}/${upper(KEY.NAME)}.pem"
+                KEY_BACKUP_FILE = "${KEY.BACKUP_DIR}/${upper(KEY.NAME)}.pem"
                 KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${upper(KEY.NAME)}.pem"
             }
     }
