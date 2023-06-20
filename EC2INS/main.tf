@@ -45,11 +45,6 @@ resource "aws_instance" "INS" {
     }
     
     user_data = data.template_file.EC2_USER_DATA[count.index].rendered
-
-    lifecycle {
-        create_before_destroy = var.INSs[count.index].AUTO_PUBLIC_IP == true ? true : false
-        prevent_destroy       = var.INSs[count.index].AUTO_PUBLIC_IP == true ? false : true
-    }
 }
 
 data "template_file" "EC2_USER_DATA" {
