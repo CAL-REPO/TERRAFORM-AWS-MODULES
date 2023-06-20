@@ -27,7 +27,8 @@ resource "aws_vpc" "VPC"{
 
 # Resource Subnet
 resource "aws_subnet" "Za_SNs" {
-    count = (length(aws_vpc.VPC) > 0 ? length(var.VPC.Za_SNs_NAME) : 0)
+    count = (length(aws_vpc.VPC) > 0 &&        
+            length(var.Za_SNs_NAME) > 0 ? length(var.Za_SNs_NAME) : 0)
     depends_on = [ aws_vpc.VPC ]
 
     vpc_id = aws_vpc.VPC[0].id
@@ -38,7 +39,31 @@ resource "aws_subnet" "Za_SNs" {
     }
 }
 
+resource "aws_subnet" "Zb_SNs" {
+    count = (length(aws_vpc.VPC) > 0 &&        
+            length(var.Zb_SNs_NAME) > 0 ? length(var.Zb_SNs_NAME) : 0)
+    depends_on = [ aws_vpc.VPC ]
 
+    vpc_id = aws_vpc.VPC[0].id
+    cidr_block = var.VPC.Zb_SNs_CIDR[count.index]
+    availability_zone = "${data.aws_region.current.name}b"
+    tags = {
+        Name = "${var.VPC.Zb_SNs_NAME[count.index]}"
+    }
+}
+
+resource "aws_subnet" "Zc_SNs" {
+    count = (length(aws_vpc.VPC) > 0 &&        
+            length(var.Zc_SNs_NAME) > 0 ? length(var.Zc_SNs_NAME) : 0)
+    depends_on = [ aws_vpc.VPC ]
+
+    vpc_id = aws_vpc.VPC[0].id
+    cidr_block = var.VPC.Zc_SNs_CIDR[count.index]
+    availability_zone = "${data.aws_region.current.name}c"
+    tags = {
+        Name = "${var.VPC.Zc_SNs_NAME[count.index]}"
+    }
+}
 
 # Resource DHCP options
 resource "aws_default_vpc_dhcp_options" "DEFAULT_DHCP" {
