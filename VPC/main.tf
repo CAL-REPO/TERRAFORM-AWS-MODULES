@@ -28,7 +28,7 @@ resource "aws_vpc" "VPC"{
 # Resource Subnet
 resource "aws_subnet" "Za_SNs" {
     count = (length(aws_vpc.VPC) > 0 &&        
-            length(var.Za_SNs_NAME) > 0 ? length(var.Za_SNs_NAME) : 0)
+            var.Za_SNs_NAME != null ? length(var.Za_SNs_NAME) : 0)
     depends_on = [ aws_vpc.VPC ]
 
     vpc_id = aws_vpc.VPC[0].id
@@ -41,7 +41,7 @@ resource "aws_subnet" "Za_SNs" {
 
 resource "aws_subnet" "Zb_SNs" {
     count = (length(aws_vpc.VPC) > 0 &&        
-            length(var.Zb_SNs_NAME) > 0 ? length(var.Zb_SNs_NAME) : 0)
+            var.Zb_SNs_NAME != null ? length(var.Zb_SNs_NAME) : 0)
     depends_on = [ aws_vpc.VPC ]
 
     vpc_id = aws_vpc.VPC[0].id
@@ -54,7 +54,7 @@ resource "aws_subnet" "Zb_SNs" {
 
 resource "aws_subnet" "Zc_SNs" {
     count = (length(aws_vpc.VPC) > 0 &&        
-            length(var.Zc_SNs_NAME) > 0 ? length(var.Zc_SNs_NAME) : 0)
+            var.Zc_SNs_NAME != null ? length(var.Zc_SNs_NAME) : 0)
     depends_on = [ aws_vpc.VPC ]
 
     vpc_id = aws_vpc.VPC[0].id
