@@ -22,8 +22,6 @@ variable "INSs" {
 }
 
 variable "INS_UDs" {
-    type = list(object(
-        list(object)
-    ))
+    type = list(string)
     default = []
 }
