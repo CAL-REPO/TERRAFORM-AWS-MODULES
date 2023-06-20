@@ -52,7 +52,7 @@ data "template_file" "EC2_USER_DATA" {
             length(var.INSs) : 0)
     template = <<-EOF
     #!/bin/bash
-    ${file("${var.INS_UDs[count.index]}")}
+    ${file("${var.INS_UDs[count.index].rendered}")}
     EOF
 }
 
