@@ -15,7 +15,7 @@ variable "VPC" {
         DHCP_DOMAIN_NTPs    = optional(list(string))
         DHCP_DOMAIN_NBSs    = optional(list(string))
         DHCP_DOMAIN_NODE    = optional(bool)
-        Za_SNs_NAME         = optional(string)
+        Za_SNs_NAME         = optional(list(string))
     })
     default = null
 }
