@@ -26,14 +26,15 @@ locals {
                 NAME = "${upper(KEY.NAME)}"
                 KEY_BACKUP_FILE = "${KEY.BACKUP_DIR}/${upper(KEY.NAME)}.pem"
                 KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${upper(KEY.NAME)}.pem"
+                KEY_S3_FILE = "${KEY.S3_DIR}/${upper(KEY.NAME)}.pem"
             }
     }
 }
 
 # Create key pair
-resource "aws_key_pair" "KEY_BACKUP" {
-    count = (length(tls_private_key.PRI_KEY) > 0 
-            && var.KEYs.BACKUP_DIR != null ? length(tls_private_key.PRI_KEY) : 0)
+resource "aws_key_pair" "KEY" {
+    count = (length(tls_private_key.PRI_KEY) > 0 ?
+            length(tls_private_key.PRI_KEY) : 0)
     
     depends_on = [ tls_private_key.PRI_KEY ]
     key_name = local.KEYs[count.index].NAME
@@ -42,46 +43,10 @@ resource "aws_key_pair" "KEY_BACKUP" {
     provisioner "local-exec" {
         command = <<EOF
             sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_BACKUP_FILE}"
-        EOF
-    }
-
-    lifecycle {
-        create_before_destroy = true
-    }
-}
-
-resource "aws_key_pair" "KEY_LINUX" {
-    count = (length(tls_private_key.PRI_KEY) > 0 
-            && var.KEYs.LINUX_DIR != null ? length(tls_private_key.PRI_KEY) : 0)
-    
-    depends_on = [ tls_private_key.PRI_KEY ]
-    key_name = local.KEYs[count.index].NAME
-    public_key = tls_private_key.PRI_KEY[count.index].public_key_openssh
-
-    provisioner "local-exec" {
-        command = <<EOF
-            sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_LINUX_FILE}"            
+            sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_LINUX_FILE}"    
             sudo chmod 400 "${local.KEYs[count.index].KEY_LINUX_FILE}"
             sudo chown $USER:$USER "${local.KEYs[count.index].KEY_LINUX_FILE}"
-        EOF
-    }
-
-    lifecycle {
-        create_before_destroy = true
-    }
-}
-
-resource "aws_key_pair" "KEY_S3" {
-    count = (length(tls_private_key.PRI_KEY) > 0 
-            && var.KEYs.S3_DIR != null ? length(tls_private_key.PRI_KEY) : 0)
-    
-    depends_on = [ tls_private_key.PRI_KEY ]
-    key_name = local.KEYs[count.index].NAME
-    public_key = tls_private_key.PRI_KEY[count.index].public_key_openssh
-
-    provisioner "local-exec" {
-        command = <<EOF
-            aws s3 cp ${local.KEYs[count.index].KEY_LINUX_FILE} s3://${S3_DIR}/${upper(KEY.NAME)}
+            aws s3 cp "${local.KEYs[count.index].KEY_LINUX_FILE}" "s3://${local.KEYs[count.index].KEY_S3_FILE}"
         EOF
     }
 
