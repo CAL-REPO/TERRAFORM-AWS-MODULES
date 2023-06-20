@@ -48,6 +48,7 @@ resource "aws_instance" "INS" {
 
     lifecycle {
         create_before_destroy = var.INSs[count.index].AUTO_PUBLIC_IP == true ? true : false
+        prevent_destroy       = var.INSs[count.index].AUTO_PUBLIC_IP == true ? false : true
     }
 }
 
