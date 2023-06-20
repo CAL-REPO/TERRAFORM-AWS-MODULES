@@ -44,7 +44,7 @@ resource "aws_instance" "INS" {
         }
     }
     
-    user_data = data.template_file.EC2_USER_DATA[count.index]
+    user_data = data.template_file.EC2_USER_DATA[count.index].rendered
 
 }
 
