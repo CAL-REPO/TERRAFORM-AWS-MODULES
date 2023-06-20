@@ -31,10 +31,10 @@ resource "aws_subnet" "Za_SNs" {
     depends_on = [ aws_vpc.VPC ]
 
     vpc_id = aws_vpc.VPC[0].id
-    cidr_block = var.VPC.Za_SN1_CIDR
+    cidr_block = var.VPC.Za_SNs_CIDR[count.index]
     availability_zone = "${data.aws_region.current.name}a"
     tags = {
-        Name = "${var.VPC.Za_SN1_NAME}"
+        Name = "${var.VPC.Za_SNs_NAME[count.index]}"
     }
 }
 
