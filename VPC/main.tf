@@ -27,7 +27,7 @@ resource "aws_vpc" "VPC"{
 
 # Resource Subnet
 resource "aws_subnet" "Za_SNs" {
-    count = (length(aws_vpc.VPC) > 0 ? length(var.VPC.Za_SNs) : 0)
+    count = (length(aws_vpc.VPC) > 0 ? length(var.VPC.Za_SNs_NAME) : 0)
     depends_on = [ aws_vpc.VPC ]
 
     vpc_id = aws_vpc.VPC[0].id
