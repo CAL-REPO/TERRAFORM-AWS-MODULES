@@ -10,5 +10,6 @@ variable "KEYs" {
         RSA_SIZE = optional(number)
         BACKUP_DIR = optional(string)
         LINUX_DIR = optional(string)
+        S3_DIR = optional(string)
     }))
 }
