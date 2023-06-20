@@ -44,8 +44,17 @@ resource "aws_instance" "INS" {
         }
     }
     
-    user_data = try(var.INS_UDs[count.index].USER_DATA, "")
+    user_data = try(data.template_file.EC2_USER_DATA[count.index], "")
 
+}
+
+data "template_file" "EC2_USER_DATA" {
+    count = (length(var.INSs) > 0 ?
+            length(var.INSs) : 0)
+    template = <<-EOF
+    #!/bin/bash
+    $(file("${var.INS_UDs[count.index]}"))
+    EOF
 }
 
 resource "aws_network_interface" "DEFAULT_NIC" {
