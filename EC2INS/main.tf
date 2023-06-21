@@ -110,22 +110,20 @@ resource "null_resource" "TERMINATE_AUTO_ASSIGNED_IP_INS" {
 
     # Execute the deletion only if the network interface is not attached to any EC2 instance
     triggers = {
-        INS_ID = aws_instance.INS[count.index].id
-        INS_UD = aws_instance.INS[count.index].user_data
+        INS_ID = join(",", aws_instance.INS[*].id)
     }
 
     provisioner "local-exec" {
         command = <<-EOT
         INS_IP_OWNER=$(aws ec2 describe-instances --instance-ids ${self.triggers.INS_ID} --query "Reservations[].Instances[].NetworkInterfaces[]" --output text --profile=${var.PROFILE})
         if [[ $INS_IP_OWNER == "amazon" ]]; then
-            aws ec2 delete-network-interface --network-interface-id ${self.triggers.DEFAULT_NIC_ID} --profile=${var.PROFILE}
+            aws ec2 terminate-instances --instance-ids ${self.triggers.INS_ID} --profile=${var.PROFILE}
             INS_STATUS=$(aws ec2 describe-instances --instance-ids ${self.triggers.INS_ID} --query 'Reservations[].Instances[].State[].Name' --output text --profile=${var.PROFILE})
             while [[ $INS_STATUS != "terminated" ]]; do
                 sleep 5
                 INS_STATUS=$(aws ec2 describe-instances --instance-ids ${self.triggers.INS_ID} --query 'Reservations[].Instances[].State[].Name' --output text --profile=${var.PROFILE})
             done
         fi
-
         EOT
         interpreter = ["bash", "-c"]
         on_failure = continue
