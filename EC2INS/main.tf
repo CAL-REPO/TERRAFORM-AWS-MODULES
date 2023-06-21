@@ -52,8 +52,8 @@ data "template_file" "EC2_USER_DATA" {
             length(var.INSs) : 0)
     template = <<-EOF
     #!/bin/bash
-    ${join("\n", [for SCRIPT in var.INS_UDs.FILE[count.index] : file("./${SCRIPT}")])}
-    ${var.INS_UDs.SCRIPT[count.index]}
+    ${join("\n", [for FILE in var.INS_UD_FILEs[count.index] : file(FILE)])}
+    ${var.INS_UD_SCRIPTs[count.index]}
     EOF
 }
 
