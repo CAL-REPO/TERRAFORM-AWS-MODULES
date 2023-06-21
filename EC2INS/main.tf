@@ -58,7 +58,6 @@ data "template_file" "EC2_USER_DATA" {
     ${join("\n", [for FILE in var.INS_UDs.FILE[count.index] : file("${FILE}")])}
     EOF
 }
-    
 
 resource "aws_network_interface" "DEFAULT_NIC" {
     count = (length(var.INSs) > 0 ?
@@ -75,12 +74,11 @@ resource "aws_network_interface" "DEFAULT_NIC" {
 
 }
 
-
 resource "null_resource" "DELETE_UNATTACHED_NIC" {
     count = (length(var.INSs) > 0 ?
             length(var.INSs) : 0)
 
-    depends_on = [ aws_instance.aws_instance.INS ]
+    depends_on = [ aws_instance.INS ]
     # Execute the deletion only if the network interface is not attached to any EC2 instance
     triggers = {
         AUTO_NIC_ID         = aws_instance.INS[count.index].primary_network_interface_id
