@@ -85,7 +85,7 @@ resource "aws_default_network_interface" "DEFAULT_NIC" {
     count = (length(var.INSs) > 0 ? 
             length(var.INSs) : 0)
 
-    depends_on = [aws_instance.INS[count.index]]
+    depends_on = [aws_instance.INS]
 
     tags = {
         Name = var.INSs[count.index].AUTO_PUBLIC_IP == true ? "${var.INSs[count.index].NAME}_DEFAULT_NIC" : null
