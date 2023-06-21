@@ -22,11 +22,11 @@ variable "INSs" {
 }
 
 variable "INS_UD_FILEs" {
-    type = optional(list(list(string)))
+    type = list(list(string))
     default = []
 }
 
 variable "INS_UD_SCRIPTs" {
-    type = optional(list(string))
+    type = list(string)
     default = []
 }
