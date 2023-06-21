@@ -225,7 +225,7 @@ resource "null_resource" "WAIT_FOR_TGW_PEER_ACCEPT" {
         while [[ $TGW_PEER_ACCEPT_STATE != "available" ]]; do
             sleep 10
             TGW_PEER_ACCEPT_STATE=$(aws ec2 describe-transit-gateway-peering-attachments --filters Name=transit-gateway-attachment-id,Values=${self.triggers.attachment_id} --query 'TransitGatewayPeeringAttachments[0].State' --output text --profile=${var.PROFILE})
-        done    
+        done
         EOT
         interpreter = ["bash", "-c"]
         on_failure = continue
