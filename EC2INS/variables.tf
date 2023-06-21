@@ -29,7 +29,7 @@ variable "INS_UDs" {
 
     default = {
         FILE = []
-        SCRIPT = []       
+        SCRIPT = []
     }
 }
 
