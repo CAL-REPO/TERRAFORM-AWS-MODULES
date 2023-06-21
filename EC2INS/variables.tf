@@ -22,9 +22,9 @@ variable "INSs" {
 }
 
 variable "INS_UDs" {
-    type = object({
+    type = map(object({
         FILE    = optional(list(list(string)))
         SCRIPT  = optional(list(string))
-    })
+    }))
     default = {}
 }
