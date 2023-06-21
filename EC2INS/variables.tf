@@ -27,7 +27,10 @@ variable "INS_UDs" {
         SCRIPT = list(string)
     })
 
-    default = {}
+    default = {
+        FILE = []
+        SCRIPT = []       
+    }
 }
 
 # variable "INS_UD_FILEs" {
