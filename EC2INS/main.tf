@@ -45,7 +45,7 @@ resource "aws_instance" "INS" {
     }
 
     user_data = data.template_file.EC2_USER_DATA[count.index].rendered
-    
+
     lifecycle {
         create_before_destroy = true
     }
@@ -81,30 +81,44 @@ resource "aws_network_interface" "DEFAULT_NIC" {
     }
 }
 
-# resource "null_resource" "DELETE_UNATTACHED_NIC" {
-#     count = (length(var.INSs) > 0 ?
-#             length(var.INSs) : 0)
+resource "aws_default_network_interface" "DEFAULT_NIC" {
+    count = (length(var.INSs) > 0 ? 
+            length(var.INSs) : 0)
 
-#     # Execute the deletion only if the network interface is not attached to any EC2 instance
+    depends_on = [aws_instance.INS[count.index]]
 
-#     triggers = {
-#         AUTO_NIC_ID         = aws_instance.INS[count.index].primary_network_interface_id
-#         DEFAULT_NIC_ID      = aws_network_interface.DEFAULT_NIC[count.index].id
-#         always_run          = timestamp()
-#     }
+    tags = {
+        Name = var.INSs[count.index].AUTO_PUBLIC_IP == true ? "${var.INSs[count.index].NAME}_DEFAULT_NIC" : null
+    }
 
-#     provisioner "local-exec" {
-#         command = <<-EOT
-#         NIC_STATUS=$(aws ec2 describe-network-interfaces --network-interface-ids ${self.triggers.DEFAULT_NIC_ID} --query 'NetworkInterfaces[0].Status' --output text --profile=${var.PROFILE})
-#         if [[ $NIC_STATUS == "available" ]]; then
-#             aws ec2 delete-network-interface --network-interface-id ${self.triggers.DEFAULT_NIC_ID} --profile=${var.PROFILE}
-#         fi
-#         NIC_TAG=$(aws ec2 describe-network-interfaces --network-interface-ids ${self.triggers.AUTO_NIC_ID} --query 'NetworkInterfaces[0].TagSet[?Key==`Name`].Value' --output text --profile=${var.PROFILE})
-#         if [[ $NIC_TAG == "" ]]; then
-#             aws ec2 create-tags --resources ${self.triggers.AUTO_NIC_ID} --tags Key=Name,Value=${var.INSs[count.index].NAME}_DEFAULT_NIC --profile=${var.PROFILE}
-#         fi
-#         EOT
-#         interpreter = ["bash", "-c"]
-#         on_failure = continue
-#     }
-# }
+    lifecycle {
+        create_before_destroy = true
+    }    
+}
+
+resource "null_resource" "DELETE_UNATTACHED_NIC" {
+    count = (length(var.INSs) > 0 ?
+            length(var.INSs) : 0)
+
+    # Execute the deletion only if the network interface is not attached to any EC2 instance
+    triggers = {
+        AUTO_NIC_ID         = aws_instance.INS[count.index].primary_network_interface_id
+        DEFAULT_NIC_ID      = aws_network_interface.DEFAULT_NIC[count.index].id
+        always_run          = timestamp()
+    }
+
+    provisioner "local-exec" {
+        command = <<-EOT
+        NIC_STATUS=$(aws ec2 describe-network-interfaces --network-interface-ids ${self.triggers.DEFAULT_NIC_ID} --query 'NetworkInterfaces[0].Status' --output text --profile=${var.PROFILE})
+        if [[ $NIC_STATUS == "available" ]]; then
+            aws ec2 delete-network-interface --network-interface-id ${self.triggers.DEFAULT_NIC_ID} --profile=${var.PROFILE}
+        fi
+        NIC_TAG=$(aws ec2 describe-network-interfaces --network-interface-ids ${self.triggers.AUTO_NIC_ID} --query 'NetworkInterfaces[0].TagSet[?Key==`Name`].Value' --output text --profile=${var.PROFILE})
+        if [[ $NIC_TAG == "" ]]; then
+            aws ec2 create-tags --resources ${self.triggers.AUTO_NIC_ID} --tags Key=Name,Value=${var.INSs[count.index].NAME}_DEFAULT_NIC --profile=${var.PROFILE}
+        fi
+        EOT
+        interpreter = ["bash", "-c"]
+        on_failure = continue
+    }
+}
