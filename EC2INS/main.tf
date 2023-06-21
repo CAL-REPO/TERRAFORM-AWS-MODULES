@@ -73,9 +73,6 @@ resource "aws_network_interface" "DEFAULT_NIC" {
         Name = var.INSs[count.index].AUTO_PUBLIC_IP == false ? "${var.INSs[count.index].NAME}_DEFAULT_NIC" : null
     }
 
-    lifecycle {
-        create_before_destroy = true
-    }
 }
 
 
