@@ -16,7 +16,7 @@ resource "tls_private_key" "PRI_KEY" {
     count = (length(var.KEYs) > 0 ?
             length(var.KEYs) : 0)
     algorithm = try(var.KEYs[count.index].ALGORITHM, "RSA") # "RSA" "ED25519"
-    rsa_bits  = try(var.KEYs[count.index].RSA_SIZE, 2048) # "2048" "4096"
+    rsa_bits  = try(var.KEYs[count.index].RSA_SIZE, 4096) # "2048" "4096"
 }
 
 locals {

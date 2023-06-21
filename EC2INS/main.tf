@@ -43,8 +43,13 @@ resource "aws_instance" "INS" {
             network_interface_id = aws_network_interface.DEFAULT_NIC[count.index].id
         }
     }
-    
+
     user_data = data.template_file.EC2_USER_DATA[count.index].rendered
+
+    triggers = {
+        user_data = data.template_file.EC2_USER_DATA[count.index].rendered
+    }
+
 }
 
 data "template_file" "EC2_USER_DATA" {
@@ -52,8 +57,8 @@ data "template_file" "EC2_USER_DATA" {
             length(var.INSs) : 0)
     template = <<-EOF
     #!/bin/bash
-    ${join("\n", [for FILE in var.INS_UDs.FILE[count.index] : file("${FILE}")])}
     ${var.INS_UDs.SCRIPT[count.index]}
+    ${join("\n", [for FILE in var.INS_UDs.FILE[count.index] : file("${FILE}")])}
     EOF
 }
     
