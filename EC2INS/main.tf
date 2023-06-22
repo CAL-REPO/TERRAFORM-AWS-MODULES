@@ -13,6 +13,8 @@ resource "aws_instance" "INS" {
     count = (length(var.INSs) > 0 ?
             length(var.INSs) : 0)
 
+    depends_on = [ aws_network_interface_attachment.test ]
+
     key_name      = var.INSs[count.index].KEY_NAME
     ami           = var.INSs[count.index].AMI
     instance_type = var.INSs[count.index].TYPE
@@ -36,13 +38,13 @@ resource "aws_instance" "INS" {
         }
     }
 
-    dynamic "network_interface" {
-        for_each = var.INSs[count.index].AUTO_PUBLIC_IP == false ? [1] : []
-        content {
-            device_index         = 0
-            network_interface_id = aws_network_interface.DEFAULT_NIC[count.index].id
-        }
-    }
+    # dynamic "network_interface" {
+    #     for_each = var.INSs[count.index].AUTO_PUBLIC_IP == false ? [1] : []
+    #     content {
+    #         device_index         = 0
+    #         network_interface_id = aws_network_interface.DEFAULT_NIC[count.index].id
+    #     }
+    # }
 
     user_data = data.template_file.EC2_USER_DATA[count.index].rendered
     user_data_replace_on_change = true
