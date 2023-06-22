@@ -41,7 +41,6 @@ resource "aws_instance" "INS" {
         content {
             device_index         = 0
             network_interface_id = aws_network_interface.DEFAULT_NIC[count.index].id
-            delete_on_termination = true
         }
     }
 
@@ -71,6 +70,15 @@ resource "aws_network_interface" "DEFAULT_NIC" {
     tags = {
         Name = var.INSs[count.index].AUTO_PUBLIC_IP == false ? "${var.INSs[count.index].NAME}_DEFAULT_NIC" : null
     }
+}
+
+resource "aws_network_interface_attachment" "test" {
+    count = (length(var.INSs) > 0 ?
+            length(var.INSs) : 0)
+
+    instance_id          = aws_instance.INS.id
+    network_interface_id = aws_network_interface.DEFAULT_NIC.id
+    device_index         = 0
 }
 
 resource "null_resource" "MARK_NIC" {
