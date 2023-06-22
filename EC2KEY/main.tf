@@ -26,9 +26,9 @@ locals {
                 NAME = "${upper(KEY.NAME)}"
                 KEY_FILE_TYPE = "${KEY.FILE_TYPE}"
                 KEY_FILE_NAME = "${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
-                KEY_BACKUP_FILE = "${KEY.BACKUP_DIR}/${KEY_FILE_NAME}.${KEY.FILE_TYPE}"
-                KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${KEY_FILE_NAME}.${KEY.FILE_TYPE}"
-                KEY_S3_FILE = "${KEY.S3_DIR}/${KEY_FILE_NAME}.${KEY.FILE_TYPE}"
+                KEY_BACKUP_FILE = "${KEY.BACKUP_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
+                KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
+                KEY_S3_FILE = "${KEY.S3_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
             }
     }
 }
