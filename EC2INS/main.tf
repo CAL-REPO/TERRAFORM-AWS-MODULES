@@ -22,7 +22,7 @@ resource "aws_instance" "INS" {
     
     associate_public_ip_address = var.INSs[count.index].AUTO_PUBLIC_IP == true ? var.INSs[count.index].AUTO_PUBLIC_IP : null
     source_dest_check           = var.INSs[count.index].AUTO_PUBLIC_IP == true ? var.INSs[count.index].SRC_DEST_CHECK : null
-    subnet_id                   = var.INSs[count.index].AUTO_PUBLIC_IP == true ? var.INSs[count.index].SN_ID : null
+    subnet_id                   = var.INSs[count.index].SN_ID
     security_groups             = var.INSs[count.index].AUTO_PUBLIC_IP == true ? var.INSs[count.index].SG_IDs : null
     private_ip                  = var.INSs[count.index].AUTO_PUBLIC_IP == true ? var.INSs[count.index].PRI_IPV4s[0] : null
 
@@ -63,7 +63,7 @@ resource "aws_network_interface" "DEFAULT_NIC" {
             length(var.INSs) : 0)
 
     source_dest_check   = try(var.INSs[count.index].SRC_DEST_CHECK, null)
-    subnet_id           = try(var.INSs[count.index].SN_ID, null)
+    # subnet_id           = try(var.INSs[count.index].SN_ID, null)
     security_groups     = var.INSs[count.index].AUTO_PUBLIC_IP == false ? var.INSs[count.index].SG_IDs : null
     private_ips         = var.INSs[count.index].AUTO_PUBLIC_IP == false ? var.INSs[count.index].PRI_IPV4s : null
 
@@ -79,15 +79,6 @@ resource "aws_network_interface" "DEFAULT_NIC" {
         Name = var.INSs[count.index].AUTO_PUBLIC_IP == false ? "${var.INSs[count.index].NAME}_DEFAULT_NIC" : null
     }
 }
-
-# resource "aws_network_interface_attachment" "test" {
-#     count = (length(var.INSs) > 0 ?
-#             length(var.INSs) : 0)
-
-#     instance_id          = aws_instance.INS[count.index].id
-#     network_interface_id = aws_network_interface.DEFAULT_NIC[count.index].id
-#     device_index         = 0
-# }
 
 resource "null_resource" "MARK_NIC" {
     count = (length(var.INSs) > 0 ?
