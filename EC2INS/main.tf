@@ -76,8 +76,8 @@ resource "aws_network_interface_attachment" "test" {
     count = (length(var.INSs) > 0 ?
             length(var.INSs) : 0)
 
-    instance_id          = aws_instance.INS.id
-    network_interface_id = aws_network_interface.DEFAULT_NIC.id
+    instance_id          = aws_instance.INS[count.index].id
+    network_interface_id = aws_network_interface.DEFAULT_NIC[count.index].id
     device_index         = 0
 }
 
