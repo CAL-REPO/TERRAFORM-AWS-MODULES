@@ -6,7 +6,7 @@ output "KEY_FILE_NAME" {
     value = local.KEYs[*].KEY_FILE_NAME
 }
 
-output "KEY_FILE" {
+output "KEY_LINUX_FILE" {
     value = local.KEYs[*].KEY_LINUX_FILE
 }
 

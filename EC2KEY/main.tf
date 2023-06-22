@@ -24,10 +24,11 @@ locals {
         for EACH, KEY in var.KEYs:
             EACH => {
                 NAME = "${upper(KEY.NAME)}"
-                KEY_FILE_NAME = "${upper(KEY.NAME)}.pem"
-                KEY_BACKUP_FILE = "${KEY.BACKUP_DIR}/${KEY_FILE_NAME})"
-                KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${KEY_FILE_NAME})"
-                KEY_S3_FILE = "${KEY.S3_DIR}/${KEY_FILE_NAME})"
+                KEY_FILE_TYPE = "${KEY.FILE_TYPE}"
+                KEY_FILE_NAME = "${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
+                KEY_BACKUP_FILE = "${KEY.BACKUP_DIR}/${KEY_FILE_NAME}.${KEY.FILE_TYPE}"
+                KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${KEY_FILE_NAME}.${KEY.FILE_TYPE}"
+                KEY_S3_FILE = "${KEY.S3_DIR}/${KEY_FILE_NAME}.${KEY.FILE_TYPE}"
             }
     }
 }
