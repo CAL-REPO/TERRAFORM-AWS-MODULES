@@ -9,3 +9,7 @@ output "DEFAULT_NIC_ID" {
 output "NIC_ID" {
     value = try(aws_network_interface.DEFAULT_NIC[*].id, null)
 }
+
+output "PUBLIC_IP" {
+    value = try(aws_instance.INS[*].public_ip, null)
+}

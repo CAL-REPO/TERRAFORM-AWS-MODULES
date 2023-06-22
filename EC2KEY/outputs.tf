@@ -1,5 +1,13 @@
 output "KEY_NAME" {
-    value = aws_key_pair.KEY[*].key_name
+    value = local.KEYs[*].NAME
+}
+
+output "KEY_FILE_NAME" {
+    value = local.KEYs[*].KEY_FILE_NAME
+}
+
+output "KEY_FILE" {
+    value = local.KEYs[*].KEY_LINUX_FILE
 }
 
 output "OWNER_ID" {
