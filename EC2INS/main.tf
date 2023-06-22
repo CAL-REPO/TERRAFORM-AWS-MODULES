@@ -22,7 +22,7 @@ resource "aws_instance" "INS" {
     
     associate_public_ip_address = var.INSs[count.index].AUTO_PUBLIC_IP == true ? var.INSs[count.index].AUTO_PUBLIC_IP : null
     source_dest_check           = var.INSs[count.index].AUTO_PUBLIC_IP == true ? var.INSs[count.index].SRC_DEST_CHECK : null
-    subnet_id                   = var.INSs[count.index].SN_ID
+    subnet_id                   = var.INSs[count.index].AUTO_PUBLIC_IP == true ? var.INSs[count.index].SN_ID : null
     security_groups             = var.INSs[count.index].AUTO_PUBLIC_IP == true ? var.INSs[count.index].SG_IDs : null
     private_ip                  = var.INSs[count.index].AUTO_PUBLIC_IP == true ? var.INSs[count.index].PRI_IPV4s[0] : null
 
@@ -36,13 +36,13 @@ resource "aws_instance" "INS" {
         }
     }
 
-    # dynamic "network_interface" {
-    #     for_each = var.INSs[count.index].AUTO_PUBLIC_IP == false ? [1] : []
-    #     content {
-    #         device_index         = 0
-    #         network_interface_id = aws_network_interface.DEFAULT_NIC[count.index].id
-    #     }
-    # }
+    dynamic "network_interface" {
+        for_each = var.INSs[count.index].AUTO_PUBLIC_IP == false ? [1] : []
+        content {
+            device_index         = 0
+            network_interface_id = aws_network_interface.DEFAULT_NIC[count.index].id
+        }
+    }
 
     user_data = data.template_file.EC2_USER_DATA[count.index].rendered
     user_data_replace_on_change = true
@@ -63,17 +63,9 @@ resource "aws_network_interface" "DEFAULT_NIC" {
             length(var.INSs) : 0)
 
     source_dest_check   = try(var.INSs[count.index].SRC_DEST_CHECK, null)
-    # subnet_id           = try(var.INSs[count.index].SN_ID, null)
+    subnet_id           = try(var.INSs[count.index].SN_ID, null)
     security_groups     = var.INSs[count.index].AUTO_PUBLIC_IP == false ? var.INSs[count.index].SG_IDs : null
     private_ips         = var.INSs[count.index].AUTO_PUBLIC_IP == false ? var.INSs[count.index].PRI_IPV4s : null
-
-    dynamic "attachment" {
-        for_each = var.INSs[count.index].AUTO_PUBLIC_IP == false ? [1] : []
-        content {
-            instance     =aws_instance.INS[count.index].id
-            device_index = 0
-        }
-    }
 
     tags = {
         Name = var.INSs[count.index].AUTO_PUBLIC_IP == false ? "${var.INSs[count.index].NAME}_DEFAULT_NIC" : null
