@@ -1,13 +1,13 @@
 output "KEY_NAME" {
-    value = local.KEYs[*].NAME
+    value = join(",", values(local.KEYs[*].NAME))
 }
 
 output "KEY_FILE_NAME" {
-    value = local.KEYs[*].KEY_FILE_NAME
+    value = join(",", values(local.KEYs[*].KEY_FILE_NAME))
 }
 
 output "KEY_LINUX_FILE" {
-    value = local.KEYs[*].KEY_LINUX_FILE
+    value = join(",", values(local.KEYs[*].KEY_LINUX_FILE))
 }
 
 output "OWNER_ID" {
