@@ -67,19 +67,24 @@ resource "aws_network_interface" "DEFAULT_NIC" {
     security_groups     = var.INSs[count.index].AUTO_PUBLIC_IP == false ? var.INSs[count.index].SG_IDs : null
     private_ips         = var.INSs[count.index].AUTO_PUBLIC_IP == false ? var.INSs[count.index].PRI_IPV4s : null
 
+    attachment {
+        instance     = var.INSs[count.index].AUTO_PUBLIC_IP == false ? aws_instance.INS[count.index].id : null
+        device_index = 0
+    }
+
     tags = {
         Name = var.INSs[count.index].AUTO_PUBLIC_IP == false ? "${var.INSs[count.index].NAME}_DEFAULT_NIC" : null
     }
 }
 
-resource "aws_network_interface_attachment" "test" {
-    count = (length(var.INSs) > 0 ?
-            length(var.INSs) : 0)
+# resource "aws_network_interface_attachment" "test" {
+#     count = (length(var.INSs) > 0 ?
+#             length(var.INSs) : 0)
 
-    instance_id          = aws_instance.INS[count.index].id
-    network_interface_id = aws_network_interface.DEFAULT_NIC[count.index].id
-    device_index         = 0
-}
+#     instance_id          = aws_instance.INS[count.index].id
+#     network_interface_id = aws_network_interface.DEFAULT_NIC[count.index].id
+#     device_index         = 0
+# }
 
 resource "null_resource" "MARK_NIC" {
     count = (length(var.INSs) > 0 ?
