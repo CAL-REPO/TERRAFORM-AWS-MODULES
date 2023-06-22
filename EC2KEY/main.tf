@@ -25,9 +25,9 @@ locals {
             EACH => {
                 NAME = "${upper(KEY.NAME)}"
                 KEY_FILE_NAME = "${upper(KEY.NAME)}.pem"
-                KEY_BACKUP_FILE = "${KEY.BACKUP_DIR}/${KEY.KEY_FILE_NAME})"
-                KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${KEY.KEY_FILE_NAME})"
-                KEY_S3_FILE = "${KEY.S3_DIR}/${KEY.KEY_FILE_NAME})"
+                KEY_BACKUP_FILE = "${KEY.BACKUP_DIR}/${KEY_FILE_NAME})"
+                KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${KEY_FILE_NAME})"
+                KEY_S3_FILE = "${KEY.S3_DIR}/${KEY_FILE_NAME})"
             }
     }
 }
