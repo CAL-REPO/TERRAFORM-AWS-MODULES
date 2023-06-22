@@ -52,6 +52,7 @@ resource "aws_instance" "INS" {
 data "template_file" "EC2_USER_DATA" {
     count = (length(var.INSs) > 0 ?
             length(var.INSs) : 0)
+            
     template = <<-EOF
     #!/bin/bash
     ${var.INS_UDs.SCRIPT[count.index]}

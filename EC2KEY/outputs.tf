@@ -9,3 +9,7 @@ output "OWNER_ID" {
 output "USER_ID" {
     value = data.aws_caller_identity.current.user_id
 }
+
+output "PRI_KEY" {
+    value = try("${tls_private_key.PRI_KEY[*].private_key_pem}", null)
+}
