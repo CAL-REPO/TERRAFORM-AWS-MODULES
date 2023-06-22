@@ -142,10 +142,10 @@ resource "aws_security_group" "SG" {
         }
     }
 
-    # revoke_rules_on_delete = true
-    lifecycle {
-        create_before_destroy = true
-    }
+    # # revoke_rules_on_delete = true
+    # lifecycle {
+    #     create_before_destroy = true
+    # }
 }
 
 # Default Route Table

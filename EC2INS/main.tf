@@ -97,7 +97,7 @@ resource "null_resource" "MARK_NIC" {
         command = <<-EOT
         NIC_STATUS=$(aws ec2 describe-network-interfaces --network-interface-ids ${self.triggers.DEFAULT_NIC_ID} --query 'NetworkInterfaces[0].Status' --output text --profile=${var.PROFILE})
         if [[ $NIC_STATUS == "available" ]]; then
-            aws ec2 create-tags --resources ${self.triggers.AUTO_NIC_ID} --tags Key=Name,Value=${var.INSs[count.index].NAME}_DO_NOT_TOUCH --profile=${var.PROFILE}
+            aws ec2 create-tags --resources ${self.triggers.DEFAULT_NIC_ID} --tags Key=Name,Value=${var.INSs[count.index].NAME}_DO_NOT_TOUCH --profile=${var.PROFILE}
         fi
         NIC_TAG=$(aws ec2 describe-network-interfaces --network-interface-ids ${self.triggers.AUTO_NIC_ID} --query 'NetworkInterfaces[0].TagSet[?Key==`Name`].Value' --output text --profile=${var.PROFILE})
         if [[ $NIC_TAG == "" ]]; then
