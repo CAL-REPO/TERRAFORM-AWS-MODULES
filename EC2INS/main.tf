@@ -13,8 +13,6 @@ resource "aws_instance" "INS" {
     count = (length(var.INSs) > 0 ?
             length(var.INSs) : 0)
 
-    depends_on = [ aws_network_interface_attachment.test ]
-
     key_name      = var.INSs[count.index].KEY_NAME
     ami           = var.INSs[count.index].AMI
     instance_type = var.INSs[count.index].TYPE
