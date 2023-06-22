@@ -68,7 +68,8 @@ resource "aws_network_interface" "DEFAULT_NIC" {
     private_ips         = var.INSs[count.index].AUTO_PUBLIC_IP == false ? var.INSs[count.index].PRI_IPV4s : null
 
     attachment {
-        instance     = var.INSs[count.index].AUTO_PUBLIC_IP == false ? aws_instance.INS[count.index].id : null
+        for_each = var.INSs[count.index].AUTO_PUBLIC_IP == false ? [1] : []
+        instance     =aws_instance.INS[count.index].id
         device_index = 0
     }
 
