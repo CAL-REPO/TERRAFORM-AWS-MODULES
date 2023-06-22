@@ -141,11 +141,6 @@ resource "aws_security_group" "SG" {
             description = try(egress.value.description, "")
         }
     }
-
-    # # revoke_rules_on_delete = true
-    # lifecycle {
-    #     create_before_destroy = true
-    # }
 }
 
 # Default Route Table

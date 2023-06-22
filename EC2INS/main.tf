@@ -45,7 +45,7 @@ resource "aws_instance" "INS" {
     }
 
     user_data = data.template_file.EC2_USER_DATA[count.index].rendered
-    user_data_replace_on_change = false
+    user_data_replace_on_change = true
 
 }
 
@@ -73,6 +73,7 @@ resource "aws_network_interface" "DEFAULT_NIC" {
     }
 }
 
+# If use this resource, Terraform tfstate will not recognized existing NIC, so NIC will be crashed whenever reapply
 # resource "null_resource" "MARK_NIC" {
 #     count = (length(var.INSs) > 0 ?
 #             length(var.INSs) : 0)
