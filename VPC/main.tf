@@ -186,10 +186,6 @@ resource "aws_route_table" "RTB" {
             vpc_peering_connection_id = try(route.value.vpc_peering_connection_id, null)            
         }
     }
-
-    lifecycle {
-        create_before_destroy = true
-    }
 }
 
 # Associate Route table with Subnet
