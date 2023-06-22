@@ -67,10 +67,12 @@ resource "aws_network_interface" "DEFAULT_NIC" {
     security_groups     = var.INSs[count.index].AUTO_PUBLIC_IP == false ? var.INSs[count.index].SG_IDs : null
     private_ips         = var.INSs[count.index].AUTO_PUBLIC_IP == false ? var.INSs[count.index].PRI_IPV4s : null
 
-    attachment {
+    dynamic "attachment" {
         for_each = var.INSs[count.index].AUTO_PUBLIC_IP == false ? [1] : []
-        instance     =aws_instance.INS[count.index].id
-        device_index = 0
+        content {
+            instance     =aws_instance.INS[count.index].id
+            device_index = 0
+        }
     }
 
     tags = {
