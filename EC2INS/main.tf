@@ -46,6 +46,11 @@ resource "aws_instance" "INS" {
 
     user_data = data.template_file.EC2_USER_DATA[count.index].rendered
     user_data_replace_on_change = true
+
+    lifecycle {
+        create_before_destroy = true
+    }
+        
 }
 
 data "template_file" "EC2_USER_DATA" {
@@ -70,7 +75,7 @@ resource "aws_network_interface" "DEFAULT_NIC" {
     tags = {
         Name = var.INSs[count.index].AUTO_PUBLIC_IP == false ? "${var.INSs[count.index].NAME}_DEFAULT_NIC" : null
     }
-    
+
     lifecycle {
         create_before_destroy = true
     }    
