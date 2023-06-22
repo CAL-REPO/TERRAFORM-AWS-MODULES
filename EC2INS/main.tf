@@ -45,12 +45,12 @@ resource "aws_instance" "INS" {
     }
 
     user_data = data.template_file.EC2_USER_DATA[count.index].rendered
-    user_data_replace_on_change = true
+    user_data_replace_on_change = false
 
     lifecycle {
         create_before_destroy = true
     }
-        
+
 }
 
 data "template_file" "EC2_USER_DATA" {
