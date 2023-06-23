@@ -14,6 +14,10 @@ output "KEY_S3_FILE" {
     value = [for KEY in local.KEYs : KEY.KEY_S3_FILE]
 }
 
+output "KEY_RUNNER_FILE" {
+    value = [for KEY in local.KEYs : KEY.KEY_RUNNER_FILE]
+}
+
 output "OWNER_ID" {
     value = data.aws_caller_identity.current.account_id
 }

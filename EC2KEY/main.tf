@@ -28,6 +28,7 @@ locals {
                 KEY_FILE_NAME = "${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
                 KEY_BACKUP_FILE = "${KEY.BACKUP_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
                 KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
+                KEY_RUNNER_FILE = "${KEY.RUNNER_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
                 KEY_S3_FILE = "${KEY.S3_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
             }
     }
