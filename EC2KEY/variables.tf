@@ -11,6 +11,7 @@ variable "KEYs" {
         FILE_TYPE = optional(string)
         BACKUP_DIR = optional(string)
         LINUX_DIR = optional(string)
+        RUNNER_DIR = optional(string)
         S3_DIR = optional(string)
     }))
 }
