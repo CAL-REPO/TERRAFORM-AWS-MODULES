@@ -45,11 +45,15 @@ resource "aws_key_pair" "KEY" {
 
     provisioner "local-exec" {
         command = <<EOF
-            sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_BACKUP_FILE}"
+            if [[ ${KEY.BACKUP_DIR} != "" ]]; then
+                sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_BACKUP_FILE}"
+            fi
             sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_LINUX_FILE}"    
             sudo chmod 400 "${local.KEYs[count.index].KEY_LINUX_FILE}"
             sudo chown $USER:$USER "${local.KEYs[count.index].KEY_LINUX_FILE}"
-            aws s3 cp "${local.KEYs[count.index].KEY_LINUX_FILE}" "s3://${local.KEYs[count.index].KEY_S3_FILE}"
+            if [[ ${KEY.S3_DIR} != "" ]]; then
+                aws s3 cp "${local.KEYs[count.index].KEY_LINUX_FILE}" "s3://${local.KEYs[count.index].KEY_S3_FILE}"
+            fi
         EOF
     }
 
