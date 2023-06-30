@@ -13,6 +13,7 @@ resource "aws_instance" "INS" {
     count = (length(var.INSs) > 0 ?
             length(var.INSs) : 0)
 
+    depends_on = [ aws_network_interface.DEFAULT_NIC ]
     key_name      = var.INSs[count.index].KEY_NAME
     ami           = var.INSs[count.index].AMI
     instance_type = var.INSs[count.index].TYPE
@@ -49,17 +50,6 @@ resource "aws_instance" "INS" {
 
 }
 
-data "template_file" "EC2_USER_DATA" {
-    count = (length(var.INSs) > 0 ?
-            length(var.INSs) : 0)
-            
-    template = <<-EOF
-    #!/bin/bash
-    ${var.INS_UDs.SCRIPT[count.index]}
-    ${join("\n", [for FILE in var.INS_UDs.FILE[count.index] : file("${FILE}")])}
-    EOF
-}
-
 resource "aws_network_interface" "DEFAULT_NIC" {
     count = (length(var.INSs) > 0 ?
             length(var.INSs) : 0)
@@ -72,6 +62,17 @@ resource "aws_network_interface" "DEFAULT_NIC" {
     tags = {
         Name = var.INSs[count.index].AUTO_PUBLIC_IP == false ? "${var.INSs[count.index].NAME}_DEFAULT_NIC" : null
     }
+}
+
+data "template_file" "EC2_USER_DATA" {
+    count = (length(var.INSs) > 0 ?
+            length(var.INSs) : 0)
+            
+    template = <<-EOF
+    #!/bin/bash
+    ${var.INS_UDs.SCRIPT[count.index]}
+    ${join("\n", [for FILE in var.INS_UDs.FILE[count.index] : file("${FILE}")])}
+    EOF
 }
 
 # If use this resource, Terraform tfstate will not recognized existing NIC, so NIC will be crashed whenever reapply
