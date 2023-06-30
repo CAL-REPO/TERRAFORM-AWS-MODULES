@@ -74,10 +74,6 @@ resource "aws_key_pair" "KEY" {
             fi
         EOF
     }
-
-    lifecycle {
-        create_before_destroy = true
-    }
 }
 
 # Remove private key when destroy
