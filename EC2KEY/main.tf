@@ -45,7 +45,7 @@ resource "aws_key_pair" "KEY" {
 
     provisioner "local-exec" {
         command = <<-EOF
-            if [[ "${var.KEYs[count.index].LINUX_DIR}" == "" ]]; then
+            if [[ "${var.KEYs[count.index].LINUX_DIR}" != "" ]]; then
                 mkdir -p "${var.KEYs[count.index].LINUX_DIR}"
                 sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_LINUX_FILE}"    
                 sudo chmod 400 "${local.KEYs[count.index].KEY_LINUX_FILE}"
@@ -73,6 +73,7 @@ resource "aws_key_pair" "KEY" {
             fi
             ls -al "${local.KEYs[count.index].KEY_RUNNER_FILE}"
         EOF
+        interpreter = ["bash", "-c"]
     }
 
     lifecycle {
