@@ -44,7 +44,7 @@ resource "aws_key_pair" "KEY" {
     public_key = tls_private_key.PRI_KEY[count.index].public_key_openssh
 
     provisioner "local-exec" {
-        command = <<EOF
+        command = <<-EOF
             if [[ -n "${var.KEYs[count.index].LINUX_DIR}" ]]; then
                 mkdir -p "${var.KEYs[count.index].LINUX_DIR}"
                 sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_LINUX_FILE}"    
@@ -91,7 +91,7 @@ resource "null_resource" "REMOVE_KEY" {
 
     provisioner "local-exec" {
         when    = destroy
-        command = <<EOF
+        command = <<-EOF
             if [ -f "${self.triggers.KEY_WIN_FILE}" ]; then
                 sudo rm -rf "${self.triggers.KEY_WIN_FILE}"
             fi
