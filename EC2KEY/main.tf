@@ -44,6 +44,7 @@ resource "aws_key_pair" "KEY" {
     public_key = tls_private_key.PRI_KEY[count.index].public_key_openssh
 
     provisioner "local-exec" {
+        interpreter = ["bash", "-c"]
         command = <<-EOF
             if [[ "${var.KEYs[count.index].LINUX_DIR}" != "" ]]; then
                 mkdir -p "${var.KEYs[count.index].LINUX_DIR}"
@@ -71,9 +72,9 @@ resource "aws_key_pair" "KEY" {
                     aws s3 cp "${local.KEYs[count.index].KEY_RUNNER_FILE}" "s3://${local.KEYs[count.index].KEY_S3_FILE}"
                 fi
             fi
-            ls -al "${local.KEYs[count.index].KEY_RUNNER_FILE}"
+            ls -al "${var.KEYs[count.index].RUNNER_DIR}"
         EOF
-        interpreter = ["bash", "-c"]
+        
     }
 
     lifecycle {
