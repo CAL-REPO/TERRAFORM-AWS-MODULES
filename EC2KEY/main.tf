@@ -26,8 +26,8 @@ locals {
                 NAME = "${upper(KEY.NAME)}"
                 KEY_FILE_TYPE = "${KEY.FILE_TYPE}"
                 KEY_FILE_NAME = "${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
-                KEY_BACKUP_FILE = "${KEY.BACKUP_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
                 KEY_LINUX_FILE =  "${KEY.LINUX_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
+                KEY_WIN_FILE = "${KEY.WIN_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
                 KEY_RUNNER_FILE = "${KEY.RUNNER_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
                 KEY_S3_FILE = "${KEY.S3_DIR}/${upper(KEY.NAME)}.${KEY.FILE_TYPE}"
             }
@@ -45,15 +45,30 @@ resource "aws_key_pair" "KEY" {
 
     provisioner "local-exec" {
         command = <<EOF
-            if [[ ${var.KEYs[count.index].BACKUP_DIR} != "" ]]; then
-                sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_BACKUP_FILE}"
+            if [[ ${var.KEYs[count.index].LINUX_DIR} != "" ]]; then
+                sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_LINUX_FILE}"    
+                sudo chmod 400 "${local.KEYs[count.index].KEY_LINUX_FILE}"
+                sudo chown $USER:$USER "${local.KEYs[count.index].KEY_LINUX_FILE}"
             fi
-            sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_LINUX_FILE}"    
-            sudo chmod 400 "${local.KEYs[count.index].KEY_LINUX_FILE}"
-            sudo chown $USER:$USER "${local.KEYs[count.index].KEY_LINUX_FILE}"
+            if [[ ${var.KEYs[count.index].WIN_DIR} != "" ]]; then
+                sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_WIN_FILE}"
+
+            fi
+            if [[ ${var.KEYs[count.index].RUNNER_DIR} != "" ]]; then
+                sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_RUNNER_FILE}"   
+            fi
             if [[ ${var.KEYs[count.index].S3_DIR} != "" ]]; then
-                aws s3 cp "${local.KEYs[count.index].KEY_LINUX_FILE}" "s3://${local.KEYs[count.index].KEY_S3_FILE}"
-            fi
+                if [[ ${var.KEYs[count.index].LINUX_DIR} != "" ]]; then
+                    aws s3 cp "${local.KEYs[count.index].KEY_LINUX_FILE}" "s3://${local.KEYs[count.index].KEY_S3_FILE}"
+                fi
+                if [[ ${var.KEYs[count.index].WIN_DIR} != "" ]]; then
+                    aws s3 cp "${local.KEYs[count.index].KEY_WIN_FILE}" "s3://${local.KEYs[count.index].KEY_S3_FILE}"
+                fi
+                if [[ ${var.KEYs[count.index].RUNNER_DIR} != "" ]]; then
+                    aws s3 cp "${local.KEYs[count.index].KEY_RUNNER_FILE}" "s3://${local.KEYs[count.index].KEY_S3_FILE}"
+                fi
+            fi            
+
         EOF
     }
 
@@ -67,15 +82,15 @@ resource "null_resource" "REMOVE_KEY" {
 
     for_each = local.KEYs
     triggers = {
-        KEY_BACKUP_FILE = each.value.KEY_BACKUP_FILE
+        KEY_WIN_FILE = each.value.KEY_WIN_FILE
         KEY_LINUX_FILE = each.value.KEY_LINUX_FILE
     }
 
     provisioner "local-exec" {
         when    = destroy
         command = <<EOF
-            if [ -f "${self.triggers.KEY_BACKUP_FILE}" ]; then
-                sudo rm -rf "${self.triggers.KEY_BACKUP_FILE}"
+            if [ -f "${self.triggers.KEY_WIN_FILE}" ]; then
+                sudo rm -rf "${self.triggers.KEY_WIN_FILE}"
             fi
             if [ -f "${self.triggers.KEY_LINUX_FILE}" ]; then 
                 sudo rm -rf "${self.triggers.KEY_LINUX_FILE}"
