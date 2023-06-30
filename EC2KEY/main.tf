@@ -55,7 +55,9 @@ resource "aws_key_pair" "KEY" {
 
             fi
             if [[ ${var.KEYs[count.index].RUNNER_DIR} != "" ]]; then
-                sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_RUNNER_FILE}"   
+                sudo echo "${tls_private_key.PRI_KEY[count.index].private_key_pem}" > "${local.KEYs[count.index].KEY_RUNNER_FILE}"
+                sudo chmod 400 "${local.KEYs[count.index].KEY_RUNNER_FILE}"
+                sudo chown $USER:$USER "${local.KEYs[count.index].KEY_RUNNER_FILE}"                  
             fi
             if [[ ${var.KEYs[count.index].S3_DIR} != "" ]]; then
                 if [[ ${var.KEYs[count.index].LINUX_DIR} != "" ]]; then
@@ -67,8 +69,8 @@ resource "aws_key_pair" "KEY" {
                 if [[ ${var.KEYs[count.index].RUNNER_DIR} != "" ]]; then
                     aws s3 cp "${local.KEYs[count.index].KEY_RUNNER_FILE}" "s3://${local.KEYs[count.index].KEY_S3_FILE}"
                 fi
-            fi            
-
+            fi
+            ls -al ${local.KEYs[count.index].KEY_RUNNER_FILE}
         EOF
     }
 
