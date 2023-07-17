@@ -6,10 +6,10 @@ variable "PROFILE" {
 variable "RT53_ZONE" {
     type = list(object({
         NAME = string
-        REGION_ID = string
-        VPC_ID = string     
         DOMAIN_NAME = string
         TYPE_PRIVATE = bool
+        REGION_ID = optional(string)
+        VPC_ID = optional(string)
     }))
     default = []
 }
