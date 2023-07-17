@@ -18,10 +18,14 @@ resource "aws_route53_zone" "RT53_ZONE" {
     tags = {
         Name = "${var.RT53_ZONE[count.index].NAME}"
     }
-    vpc {
-        vpc_region = "${var.RT53_ZONE[count.index].TYPE_PRIVATE}" == true ? var.RT53_ZONE[count.index].REGION_ID : null
-        vpc_id     = "${var.RT53_ZONE[count.index].TYPE_PRIVATE}" == true ? var.RT53_ZONE[count.index].VPC_ID : null  
-    }
+
+    dynamic "vpc" {
+        for_each = var.RT53_ZONE[count.index].TYPE_PRIVATE == false ? [1] : []
+        content {
+            vpc_region  = var.RT53_ZONE[count.index].REGION_ID
+            vpc_id      = var.RT53_ZONE[count.index].VPC_ID
+        }
+    }    
 }
 
 resource "aws_route53_record" "RT53_ZONE_RECORD" {
