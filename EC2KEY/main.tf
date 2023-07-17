@@ -87,6 +87,7 @@ resource "null_resource" "REMOVE_KEY" {
 
     provisioner "local-exec" {
         when    = destroy
+        interpreter = ["bash", "-c"]
         command = <<-EOF
             if [ -f "${self.triggers.KEY_WIN_FILE}" ]; then
                 sudo rm -rf "${self.triggers.KEY_WIN_FILE}"

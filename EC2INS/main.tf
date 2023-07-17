@@ -69,8 +69,8 @@ data "template_file" "EC2_USER_DATA" {
             
     template = <<-EOF
     #!/bin/bash
-    ${var.INS_UDs.SCRIPT[count.index]}
     ${join("\n", [for FILE in var.INS_UDs.FILE[count.index] : file("${FILE}")])}
+    ${var.INS_UDs.SCRIPT[count.index]}
     EOF
 }
 
@@ -88,6 +88,8 @@ data "template_file" "EC2_USER_DATA" {
 #     }
 
 #     provisioner "local-exec" {
+#         interpreter = ["bash", "-c"]
+#         on_failure = continue
 #         command = <<-EOT
 #         NIC_STATUS=$(aws ec2 describe-network-interfaces --network-interface-ids ${self.triggers.DEFAULT_NIC_ID} --query 'NetworkInterfaces[0].Status' --output text --profile=${var.PROFILE})
 #         if [[ $NIC_STATUS == "available" ]]; then
@@ -98,7 +100,5 @@ data "template_file" "EC2_USER_DATA" {
 #             aws ec2 create-tags --resources ${self.triggers.AUTO_NIC_ID} --tags Key=Name,Value=${var.INSs[count.index].NAME}_DEFAULT_NIC --profile=${var.PROFILE}
 #         fi
 #         EOT
-#         interpreter = ["bash", "-c"]
-#         on_failure = continue
 #     }
 # }
